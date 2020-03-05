@@ -1,7 +1,7 @@
 const neo4j = require('neo4j-driver');
 var uri = 'https://hobby-aaoahnggdnbngbkenbccnmdl.dbs.graphenedb.com:24780/db/data/';
 
-const driver = neo4j.driver('bolt://localhost', neo4j.auth.basic('Dat', '123456'));
+const { driver } = require('../config/db');
 var session = driver.session();
 
 module.exports = class Products {
@@ -159,7 +159,6 @@ module.exports = class Products {
                     limitN : limit,
                     skipN : skip
                 });
-                console.log(listProducts)
             if(!listProducts.records) return resolve({ error: true, message: 'cant_get_product'})
             return resolve({ error: false, data: listProducts.records });
         })

@@ -22,8 +22,9 @@ var port = process.env.PORT || 3000;
 //connect to neo4j db
 const neo4j = require('neo4j-driver');
 var uri = 'https://hobby-aaoahnggdnbngbkenbccnmdl.dbs.graphenedb.com:24780/db/data/';
+
 //const driver = neo4j.driver(uri, neo4j.auth.basic('neo4j', 'b.NEiI7q3qlyim.QGCH21YwvGOxbGQT'));
-const driver = neo4j.driver('bolt://localhost', neo4j.auth.basic('Dat', '123456'));
+const { driver } = require('./config/db');
 var session = driver.session();
 const expressSession       = require('express-session');
 app.use(expressSession({

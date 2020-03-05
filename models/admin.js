@@ -3,7 +3,7 @@ const { hash, compare } = require('bcrypt');
 const { sign, verify } = require('../utils/jwt');
 var uri = 'https://hobby-aaoahnggdnbngbkenbccnmdl.dbs.graphenedb.com:24780/db/data/';
 
-const driver = neo4j.driver('bolt://localhost', neo4j.auth.basic('Dat', '123456'));
+const { driver } = require('../config/db');
 
 var session = driver.session();
 

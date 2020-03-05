@@ -1,7 +1,7 @@
 const neo4j = require('neo4j-driver');
 var uri = 'https://hobby-aaoahnggdnbngbkenbccnmdl.dbs.graphenedb.com:24780/db/data/';
 
-const driver = neo4j.driver('bolt://localhost', neo4j.auth.basic('Dat', '123456'));
+const { driver } = require('../config/db');
 var session = driver.session();
 
 module.exports = class Categorys {

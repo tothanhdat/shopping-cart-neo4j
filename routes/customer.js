@@ -15,21 +15,25 @@ const _lodash = require('lodash');
 route.use(express.static('./public'));
 
 route.get('/', async (req, res) => {
+    console.log('-----------------TRANG HOME')
     let listProducts = await PRODUCT_MODEL.findLimitSkip(10, 0);
     let { token } = req.session;
     let idCustomer = null;
     let email = '';
     let listProductsRecomendation = { data: [] };
+    console.log({ data : listProducts.data[0]._fields[0].properties });
     if (token) {
         let checkRole = await verify(token);
         idCustomer = checkRole.data.id;
         email = checkRole.data.name;
+        
         let infoCustomer = await CUSTOMER_MODEL.findById(idCustomer);
         let listProductsRecomendation = await PRODUCT_MODEL.findWithOrder(infoCustomer.data.phone);
         let infoOder = await ORDER_MODEL.findByIdCustomer(idCustomer);
         if (listProductsRecomendation.error || listProductsRecomendation.data.length == 0) {
             listProductsRecomendation = await PRODUCT_MODEL.findWithSexAndOld(infoCustomer.phone);
         }
+
         if (infoOder.error) {
             return res.render('pages/home', {
                 listData: listProducts.data,
@@ -39,7 +43,6 @@ route.get('/', async (req, res) => {
                 listOrder: []
             });
         }
-
         if (listProducts.error) res.render('404');
         return res.render('pages/home', {
             listData: listProducts.data,
@@ -67,39 +70,33 @@ route.post('/login', async (req, res) => {
     let { phoneNumber, password } = req.body;
     let checkLogin = await CUSTOMER_MODEL.signIn(phoneNumber, password);
     if (checkLogin.error) res.json({ error: true, message: ' phone or password  was been wrong! ' });
+
     req.session.token = checkLogin.data.token;
-    let listProducts = await PRODUCT_MODEL.findLimitSkip(10, 0);
+    
+
+    //Lấy sản phẩm gợi ý cho người dùng theo order đã có và theo giới tính + độ tuổi
     let listProductsRecomendation = await PRODUCT_MODEL.findWithOrder(phoneNumber);
-    let infoOder = await ORDER_MODEL.findByIdCustomer(checkLogin.data.infoUSer.records[0]._fields[0].properties.id);
-    console.log('================================login');
-    console.log(infoOder)
     if (listProductsRecomendation.error || listProductsRecomendation.data.length == 0) {
-        console.log('jion ==')
         listProductsRecomendation = await PRODUCT_MODEL.findWithSexAndOld(phoneNumber);
-        console.log(listProductsRecomendation.data)
     }
+
+
+    // Lấy theo Order của khách hàng đã mua trong hệ thống
+    let infoOder = await ORDER_MODEL.findByIdCustomer(checkLogin.data.infoUSer.records[0]._fields[0].properties.id);
     if (infoOder.error) {
-        console.log(' no order ')
-        return res.redirect('/', {
-            listData: listProducts.data,
-            email: checkLogin.data.infoUSer.records[0]._fields[0].properties.name,
-            id: checkLogin.data.infoUSer.records[0]._fields[0].properties.id,
-            listProductsRecomendation: listProductsRecomendation.data,
-            listOrder: []
-        });
+        return res.redirect('/');
     }
-    console.log('==order ?????')
-    console.log(infoOder)
-    console.log(infoOder.data)
+
+    // Danh sách sản phẩm trong hệ thống
+    let listProducts = await PRODUCT_MODEL.findLimitSkip(10, 0);
     if (listProducts.error) res.render('404');
-    return res.render('pages/home', {
+    return res.render('pages/home', {   
         listData: listProducts.data,
         email: checkLogin.data.infoUSer.records[0]._fields[0].properties.name,
         id: checkLogin.data.infoUSer.records[0]._fields[0].properties.id,
         listProductsRecomendation: listProductsRecomendation.data,
         listOrder: infoOder.data
     });
-
 })
 
 route.get('/register', function (req, res) {
