@@ -1,10 +1,8 @@
-const neo4j = require('neo4j-driver');
-var uri = 'https://hobby-aaoahnggdnbngbkenbccnmdl.dbs.graphenedb.com:24780/db/data/';
-
-const { driver } = require('../config/db');
+const { driver } = require('../config/cf_db')
 var session = driver.session();
 
 module.exports = class Products {
+    // Thêm sản phẩm
     static insert(idProduct, productName, categoryName, image, amout, price) {
         return new Promise(async resolve => {
             try {
@@ -47,6 +45,7 @@ module.exports = class Products {
             }
         });
     }
+    // Tất cả sản phẩm
     static findAll(){
         return new Promise(async resolve => {
             let query = `MATCH (n:Products) RETURN n `;
@@ -56,7 +55,7 @@ module.exports = class Products {
         })
     }
   
- 
+    // tìm những sản phẩm đã order
     static findWithOrder(phone){
         return new Promise(async resolve => {
             try {
@@ -83,6 +82,7 @@ module.exports = class Products {
             }
         });
     }
+    // sản phẩm dcd khach xem nhiều nhất
     static watchAlot(){
         return new Promise(async resolve =>{
             try {
@@ -94,7 +94,10 @@ module.exports = class Products {
             }
         })
     }
-
+    // tạo mối quan hệ giữ 2 sản phẩm
+    // vi dụ: mua A tặng kèm B
+    // mua A gảm giá B
+    // dựa vào chiến dịch của cưa hàng
     static makeRealtionshipProducts(){
         return new Promise(async resolve =>{
             try {
@@ -107,7 +110,7 @@ module.exports = class Products {
             }
         })
     }
-
+    // xóa sản phẩm
     static deleteByID(idProduct){
         return new Promise(async resolve => {
             let query                = `MATCH (n:Products{id:$idProduct}) DETACH DELETE n`;
@@ -117,7 +120,7 @@ module.exports = class Products {
             return resolve({ error: false, message:'delete_order_success' });
         })
     }
-
+    // tìm các mối quan hệ của sản phẩm
     static findRelationship(){
         return new Promise(async resolve=>{
             let query = `MATCH(Orders)-[r]->(Products)
@@ -131,9 +134,35 @@ module.exports = class Products {
             return resolve({ error : false, message : 'find success', data : resultFind.records });
         })
     }
-
-    
-
+    // tìm những sản phầm khách đã xem
+    static findWithRForCus(phoneNumber){
+        return new Promise(async resolve =>{
+            let queryMaxRForcus =   `MATCH (:Customers { phone: $phoneNumber })-[r:FORCUS]->( Products)
+            return   max(r.WATCH)`
+            let maxForcus = await session.run(
+                queryMaxRForcus,
+                {phoneNumber : phoneNumber}
+            );
+            console.log(maxForcus.records[0]._fields[0])
+            let maxR = maxForcus.records[0]._fields[0];
+            if(maxR){
+                let queryProductWithRForcus = `MATCH (:Customers { phone: $phoneNumber })-[r:FORCUS]->( Products)
+                where r.WATCH = ${maxR}
+                return  Products
+                LIMIT 5`
+                let maxForcus = await session.run(
+                    queryProductWithRForcus,
+                    {phoneNumber : phoneNumber}
+                );
+                console.log({maxForcus})
+                return resolve({ error : false, message :'get_success', data :  maxForcus.records});
+            }else{
+                return resolve({ error : true, message :'get_fail', data :null});
+            }
+        })
+      
+    }
+    // tìm những sản phẩm tương tự 
     static findWithCategory(nameProduct){
         return new Promise(async resolve =>{
             nameProduct = nameProduct.trim()
@@ -148,7 +177,7 @@ module.exports = class Products {
             return resolve({ error : false, message :'get_success', data : listProducts});
         });
     }
-
+    // danh sachsanr phẩm phân trang
     static findLimitSkip(limit, skip){
         return new Promise(async resolve => {
             let query = `MATCH (n:Products) RETURN n 
@@ -159,10 +188,13 @@ module.exports = class Products {
                     limitN : limit,
                     skipN : skip
                 });
+
+                console.log(listProducts)
             if(!listProducts.records) return resolve({ error: true, message: 'cant_get_product'})
             return resolve({ error: false, data: listProducts.records });
         })
     }
+    // tìm tất cả sản phẩm của 1 danh mục
     static findAllProducuctOneCategory(categoryID, skip){
         return new Promise(async resolve =>{
             let query = `
@@ -180,7 +212,7 @@ module.exports = class Products {
             return resolve({ error : false, message :'get_success', data : listProducts.records});
         });
     }
-
+    // tìm sản phẩm theo tuổi và giới tinh
     static findWithSexAndOld(phone){
         return new Promise(async resolve => {
             try {
@@ -199,6 +231,7 @@ module.exports = class Products {
           
         })
     }
+    // lấy thông tin sản phẩmtheoID
     static findByID(idProduct){
         return new Promise(async resolve => {
             if(idProduct){  
@@ -212,7 +245,7 @@ module.exports = class Products {
             return resolve({ error: true, message: 'cant_get_product'});
         })
     }
-
+    // tìm sản phẩm theo giá
     static findWithPrice(startPrice, endPrice){
         return new Promise(async resolve => {
             if(startPrice, endPrice){  
@@ -229,7 +262,7 @@ module.exports = class Products {
             return resolve({ error: true, message: 'cant_get_product'});
         })
     }
-
+    // chỉnh sưa thoogn tin sản phẩm
     static update(idProduct, nameProducts, amout, price, image){
         return new Promise(async resolve => {
            
@@ -248,19 +281,18 @@ module.exports = class Products {
             return resolve({ error: false, message:'update_order_success' });
         })
     }
-
+    // tìm những sản phẩm được mua nhiều nhất // giới hạn 10
     static findBestSell(){
         return new Promise(async resolve => {
-            let query                = `MATCH (Products { id: $idProduct })
-            SET Products.amout = $amout , Products.name = $nameProducts, Products.image = $image
-            RETURN Products`;
-            const resultUpdate      = await session.run(query, 
-                { idProduct: idProduct, amout:amout, nameProducts : nameProducts, image : image });
-            if(!resultUpdate) return resolve({ error: true, message: 'cant_get_product'})
-            return resolve({ error: false, message:'update_order_success' });
+            let query                = `MATCH (Orders)-[:HAVE]->(P: Products)
+            Return P
+            LIMIT 10`;
+            const listProducts      = await session.run(query);
+            if(!listProducts) return resolve({ error: true, message: 'cant_get_product'})
+            return resolve({ error: false, message:'update_order_success', data : listProducts.records });
         })
     }
-
+    // tạ mối quan hệ  "đã xme sản phẩm "  cho khách hàng với sản phẩm
     static makeRealtionForcus (idProduct, idCustomer, time){
         return new Promise(async resolve => {
 
@@ -280,14 +312,14 @@ module.exports = class Products {
                 RETURN Products`;
                 let resultUpdateRe      = await session.run(queryUpdate, 
                     { 
-                        idProduct: idProduct,
-                        idCustomer: idCustomer,
-                        newWatch: newWatch
+                        idProduct   : idProduct,
+                        idCustomer  : idCustomer,
+                        newWatch    : newWatch
                     });
                 if(!resultUpdateRe) return resolve({ error: true, message: 'cant_get_product'})
                 return resolve({ error: false, message:'update_relation_customer_Product_success' });
             }
-             let query = `MATCH (Customers { id: $idCustomer }),(Products { id: $idProduct })
+            let query = `MATCH (Customers { id: $idCustomer }),(Products { id: $idProduct })
                         CREATE (Customers)-[r:FORCUS { WATCH : $time }]->(Products)
                         RETURN Products`;
             let resultMakeRe      = await session.run(query, 
@@ -300,4 +332,31 @@ module.exports = class Products {
             return resolve({ error: false, message:'update_order_success' });
         })
     }
+
+    // tìm sản phẩm có độ ảnh hưởng nhiều nhất ( được xem nhiều , mua nhiều)
+    static getListProductTop (){
+        return new Promise(async resolve => {
+            let query                = 
+            `
+            CALL algo.pageRank.stream('Products', '', { iterations:20, dampingFactor:0.85 })
+            YIELD nodeId, score
+            RETURN  algo.asNode(nodeId).name AS name, score
+            ORDER BY score DESC`;
+            let listProduct      = await session.run(query);
+            if(!listProduct)
+                return resolve({ error: true, message:'get_product_fail' });
+
+            return resolve({ error: false, data : listProduct });
+
+        })
+    }
+
+    /*
+    `
+    CALL algo.pageRank.stream('Products', 'IS_FRIENDS', {iterations:20, dampingFactor:0.85, weightProperty: "forcus"})
+    YIELD nodeId, score
+    RETURN algo.asNode(nodeId)._id AS _id, algo.asNode(nodeId).name AS name, score
+    ORDER BY score DESC`;*/
+
+
 }

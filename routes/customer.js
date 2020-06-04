@@ -21,7 +21,7 @@ route.get('/', async (req, res) => {
     let idCustomer = null;
     let email = '';
     let listProductsRecomendation = { data: [] };
-    console.log({ data : listProducts.data[0]._fields[0].properties });
+    let listCategorys = await CATEGORY_MODEL.findAll();
     if (token) {
         let checkRole = await verify(token);
         idCustomer = checkRole.data.id;
@@ -43,7 +43,7 @@ route.get('/', async (req, res) => {
                 listOrder: []
             });
         }
-        if (listProducts.error) res.render('404');
+        if(listProducts.error) res.render('404');
         return res.render('pages/home', {
             listData: listProducts.data,
             email: email,
@@ -53,12 +53,16 @@ route.get('/', async (req, res) => {
             _lodash
         });
     }
+    if(listProductsRecomendation.error || listProductsRecomendation.data.length == 0){
+        listProductsRecomendation = listProducts;
+    }
     // console.log({ listProducts });
     return res.render('pages/home', {
         listData: listProducts.data,
         email: email,
         id: idCustomer,
-        listProductsRecomendation: [],
+        listCategorys: listCategorys.data,
+        listProductsRecomendation: listProductsRecomendation.data,
         listOrder: []
     });
 })
@@ -71,7 +75,7 @@ route.post('/login', async (req, res) => {
     let checkLogin = await CUSTOMER_MODEL.signIn(phoneNumber, password);
     if (checkLogin.error) res.json({ error: true, message: ' phone or password  was been wrong! ' });
 
-    req.session.token = checkLogin.data.token;
+    req.session.token   = checkLogin.data.token;
     
 
     //Lấy sản phẩm gợi ý cho người dùng theo order đã có và theo giới tính + độ tuổi

@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>Coveg - Responsive HTML5 Template.</title>
+    <title></title>
 
     <link rel="shortcut icon" href="assets/img/favicon.png" type="image/x-icon">
 
@@ -57,6 +57,7 @@
                 <div class="row justify-content-center">
                     <div class="col-lg-10">
                         <div class="special-offer-inner special-offer-slider">
+                         <!-- Danh sách sản phẩm gợi ý  (đói tượng chưa đăng nhập)  -->
                         <% listProductsRecomendation.forEach(product=>{%>
                             <div class="single-product">
                                 <div class="special-offer-product bg-white m-25 p-25 b1 br-5">
@@ -80,7 +81,7 @@
                                 </div>
                             </div>
                         <%})%>
-
+                         <!-- Danh sách sản gợi ý theo thông tin người dùng đã đăng nhập    -->
                         <% listOrder.forEach(product=>{%>
                             <div class="single-product">
                                 <div class="special-offer-product bg-white m-25 p-25 b1 br-5">
@@ -147,129 +148,21 @@
             <div class="container">
                 <div class="section-title mb-45">
                     <h2>DANH MỤC SẢN PHẨM ĐƯỢC MUA NHIỀU</h2>
-                    <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+                       
                 </div>
                 <div class="row">
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-30">
-                        <a href="shop.html" class="categori-item bg-white br-5">
-                            <div class="categori-img d-flex align-items-center justify-content-center">
-                                <img src="assets/img/product/product5.png" alt="img">
+                 <%listCategorys.forEach(product =>{%>
+                          <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-30">
+                                <a href="shop.html" class="categori-item bg-white br-5">
+                                    <div class="categori-img d-flex align-items-center justify-content-center">
+                                        <img src="assets/img/product/product5.png" alt="img">
+                                    </div>
+                                    <div class="categori-name">
+                                    <span>    <%= product._fields[0].properties.name %></span>
+                                    </div>
+                                </a>
                             </div>
-                            <div class="categori-name">
-                                <span>Fruits and Vegetables</span>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-30">
-                        <a href="shop.html" class="categori-item bg-white br-5">
-                            <div class="categori-img d-flex align-items-center justify-content-center">
-                                <img src="assets/img/product/product6.png" alt="img">
-                            </div>
-                            <div class="categori-name">
-                                <span>Meat and Fish</span>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-30">
-                        <a href="shop.html" class="categori-item bg-white br-5">
-                            <div class="categori-img d-flex align-items-center justify-content-center">
-                                <img src="assets/img/product/product7.png" alt="img">
-                            </div>
-                            <div class="categori-name">
-                                <span>Home Cleaning</span>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-30">
-                        <a href="shop.html" class="categori-item bg-white br-5">
-                            <div class="categori-img d-flex align-items-center justify-content-center">
-                                <img src="assets/img/product/product8.png" alt="img">
-                            </div>
-                            <div class="categori-name">
-                                <span>Pest Control</span>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-30">
-                        <a href="shop.html" class="categori-item bg-white br-5">
-                            <div class="categori-img d-flex align-items-center justify-content-center">
-                                <img src="assets/img/product/product9.png" alt="img">
-                            </div>
-                            <div class="categori-name">
-                                <span>Office Products</span>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-30">
-                        <a href="shop.html" class="categori-item bg-white br-5">
-                            <div class="categori-img d-flex align-items-center justify-content-center">
-                                <img src="assets/img/product/product10.png" alt="img">
-                            </div>
-                            <div class="categori-name">
-                                <span>Beauty Products</span>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-30">
-                        <a href="shop.html" class="categori-item bg-white br-5">
-                            <div class="categori-img d-flex align-items-center justify-content-center">
-                                <img src="assets/img/product/product11.png" alt="img">
-                            </div>
-                            <div class="categori-name">
-                                <span>Health Products</span>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-30">
-                        <a href="shop.html" class="categori-item bg-white br-5">
-                            <div class="categori-img d-flex align-items-center justify-content-center">
-                                <img src="assets/img/product/product12.png" alt="img">
-                            </div>
-                            <div class="categori-name">
-                                <span>Pet Care</span>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-30">
-                        <a href="shop.html" class="categori-item bg-white br-5">
-                            <div class="categori-img d-flex align-items-center justify-content-center">
-                                <img src="assets/img/product/product13.png" alt="img">
-                            </div>
-                            <div class="categori-name">
-                                <span>Appliances</span>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-30">
-                        <a href="shop.html" class="categori-item bg-white br-5">
-                            <div class="categori-img d-flex align-items-center justify-content-center">
-                                <img src="assets/img/product/product14.png" alt="img">
-                            </div>
-                            <div class="categori-name">
-                                <span>Baby Care</span>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-30">
-                        <a href="shop.html" class="categori-item bg-white br-5">
-                            <div class="categori-img d-flex align-items-center justify-content-center">
-                                <img src="assets/img/product/product15.png" alt="img">
-                            </div>
-                            <div class="categori-name">
-                                <span>Office Products</span>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-30">
-                        <a href="shop.html" class="categori-item bg-white br-5">
-                            <div class="categori-img d-flex align-items-center justify-content-center">
-                                <img src="assets/img/product/product16.png" alt="img">
-                            </div>
-                            <div class="categori-name">
-                                <span>Rice Items</span>
-                            </div>
-                        </a>
-                    </div>
+                        <%})%>
                 </div>
             </div>
         </section>
@@ -315,7 +208,7 @@
                 </div>
                 <div id ='list-new-product' class="row">
                 <%listData.forEach( product=>{%>
-                    <div class="custom-5-item col-xl-3 col-lg-4 col-md-6">
+                    <div  id = 'item-products' _productID = '<%= product._fields[0].properties.id%>' class="custom-5-item col-xl-3 col-lg-4 col-md-6">
                         <div class="product">
                             <div class="product-img-wrap">
                                 <img src="<%= product._fields[0].properties.image %>" alt="img">
@@ -588,5 +481,38 @@
 
         <script src="/assets/js/script.js" type="9467ed8acf8e8cf7695daa4a-text/javascript"></script>
 </body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
+<script>
+$(document).ready(function(){
+    function coverStringTOobject(str)
+    function coverStringTOarrayObject (str) {
+    var arr = [];
+    for(let i=0; i< str.length; i++){
+        let startPoint = i;
+        if(str[i] == '{'){
+            let newStr   = str.slice(i, str.length);
+            let endPoint =  newStr.indexOf("}");
+            console.log(str[i])
+            console.log(str[endPoint])
+            console.log(str.slice(startPoint, endPoint +2));
+            let itemObject   = JSON.parse(JSON.stringify(str.slice(startPoint, endPoint +2)));
+            arr.push(itemObject);
+        }
+    }
+    return arr;
+    }
+
+   localStorage.setItem("arrWatch", `[{id :1, amout :3}, {id :2, amout :3}, {id :3, amout :3}]`);
+   let listClick = localStorage.getItem("arrWatch");
+    $('body').on('click', '#item-products', function(){
+        let productID = $(this).attr('_productID');
+        // var b = JSON.parse(JSON.stringify(listClick));
+        let arrReceiver = coverStringTOarrayObject(listClick)
+        console.log(arrReceiver)
+
+    })
+
+})
+</script>
 </html>

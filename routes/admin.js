@@ -12,10 +12,8 @@ const PRODUCT_MODEL  = require('../models/product');
 route.post('/login', async (req, res) => {
     let { username, password } = req.body;
      let checkLogin = await ADMIN_MODEL.signIn(username, password);
-     console.log(checkLogin);   
      if(checkLogin.error) res.json({ error : true, message : ' phone or password  was been wrong! ' });
      let listProducts = await PRODUCT_MODEL.findAll();
-     console.log(listProducts)
      req.session.token = checkLogin.data.token;
      
      return res.render('pages/home', { data : listProducts.data });
@@ -25,7 +23,6 @@ route.post('/new-admin', async(req, res) =>{
     let { adminName, email,  phoneNumber, sex, password } = req.body; 
     if(adminName && phoneNumber ){
         let id = uuidv5(phoneNumber, MY_NAMESPACE);
-        console.log(id);
         let hadInsertCategory = await ADMIN_MODEL.insert(id.toString(), adminName, password, email, phoneNumber, sex);
         if(hadInsertCategory.error) return res.json({ message:hadInsertCategory.message });
         return res.json(hadInsertCategory)
